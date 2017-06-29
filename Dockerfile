@@ -40,12 +40,12 @@ RUN curl -L https://github.com/GMOD/Apollo/archive/${WEBAPOLLO_VERSION}.tar.gz |
 
 #ADD FILES AND SET PERMISSIONS
 COPY config/launch.sh /bin/
-COPY config/apollo-config.groovy /apollo/
+COPY config/apollo-config.groovy config/build.sh /apollo/
 RUN chown -R apollo:apollo /apollo
 
 #BUILD THE APOLLO SOURCES
 USER apollo
-RUN /apollo/apollo clean-all && /apollo/apollo /apollo/deploy/bin/build.sh
+RUN /bin/bash /apollo/build.sh
 
 USER root
 RUN rm -rf ${CATALINA_HOME}/webapps/* && \

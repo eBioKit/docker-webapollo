@@ -1,34 +1,46 @@
+############################################################
+# Launch for Webapollo container for the eBioKit
+# This is a template, the following values must be replaced:
+#   - $${INSTANCE}, name for the instance
+#   - $${ADMIN_EMAIL}, email for admin user
+#   - $${ADMIN_PASS}, email for admin user
+#   - $${APP_1_PORT_1}, port number for Webapollo instance
+#   - $${DATA_LOCATION}, location for the application data
+# TODO:
+# - Tomcat logs
+############################################################
+
 version: '2'
 services:
 
-    §§INSTANCE-webapollo:
+    $${INSTANCE}-webapollo:
       image: ebiokit/docker-webapollo
-      container_name: §§INSTANCE-webapollo
+      container_name: $${INSTANCE}-webapollo
       environment:
         - WEBAPOLLO_DB_HOST=postgres-machine
-        - APOLLO_ADMIN_EMAIL=§§ADMIN_EMAIL
-        - APOLLO_ADMIN_PASSWORD=§§ADMIN_PASS
+        - APOLLO_ADMIN_EMAIL=$${ADMIN_EMAIL}
+        - APOLLO_ADMIN_PASSWORD=$${ADMIN_PASS}
       links:
-        - §§INSTANCE-webapollo-postgres:postgres-machine
+        - $${INSTANCE}-webapollo-postgres:postgres-machine
       depends_on:
-        - §§INSTANCE-webapollo-data
+        - $${INSTANCE}-webapollo-data
       volumes_from:
-        - §§INSTANCE-webapollo-data
+        - $${INSTANCE}-webapollo-data
       ports:
-        - "§§PORT:8080"
+        - "$${APP_1_PORT_1}:8080"
 
-    §§INSTANCE-webapollo-postgres:
+    $${INSTANCE}-webapollo-postgres:
       image: postgres
-      container_name: §§INSTANCE-webapollo-postgres
+      container_name: $${INSTANCE}-webapollo-postgres
       environment:
         - PGDATA=/data/postgresql
       depends_on:
-        - §§INSTANCE-webapollo-data
+        - $${INSTANCE}-webapollo-data
       volumes_from:
-        - §§INSTANCE-webapollo-data
+        - $${INSTANCE}-webapollo-data
 
-    §§INSTANCE-webapollo-data:
+    $${INSTANCE}-webapollo-data:
       image: busybox
-      container_name: §§INSTANCE-webapollo-data
+      container_name: $${INSTANCE}-webapollo-data
       volumes:
-        - §§FOLDER/data:/data
+        - $${DATA_LOCATION}/data:/data

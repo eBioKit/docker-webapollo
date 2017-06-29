@@ -18,9 +18,7 @@ This docker image extends and distributes the following software:
 
 ## Running the Container
 
-The container is publicly available as `ebiokit/docker-webapollo`. The recommended
-method for launching the container is via docker-compose due to a dependency on
-a postgres image.
+The container is publicly available as `ebiokit/docker-webapollo`. The recommended method for launching the container is via docker-compose due to a dependency on a postgres image.
 
 ## Quickstart
 
@@ -28,11 +26,11 @@ This procedure starts tomcat in a standard virtualised environment with a Postgr
 
 - Install [docker](https://docs.docker.com/engine/installation/) for your system if not previously done.
 - `docker run -it -p 8888:8080 ebiokit/docker-webapollo`
-- Apollo will be available at [http://localhost:8888/](http://localhost:8888/) (or 8888 if you don't configure the port)
+- Apollo will be available at [http://localhost:8888/](http://localhost:8888/)
 
 ### Logging In
 
-The default credentials in this image are. Credentials can be changed in the docker-compose file:
+The default credentials in this image are below. Credentials can be changed in the docker-compose file:
 
 | Credentials |                    |
 | ---         | ------------------ |
