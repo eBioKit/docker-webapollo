@@ -1,0 +1,34 @@
+version: '2'
+services:
+
+    §§INSTANCE-webapollo:
+      image: ebiokit/docker-webapollo
+      container_name: §§INSTANCE-webapollo
+      environment:
+        - WEBAPOLLO_DB_HOST=postgres-machine
+        - APOLLO_ADMIN_EMAIL=§§ADMIN_EMAIL
+        - APOLLO_ADMIN_PASSWORD=§§ADMIN_PASS
+      links:
+        - §§INSTANCE-webapollo-postgres:postgres-machine
+      depends_on:
+        - §§INSTANCE-webapollo-data
+      volumes_from:
+        - §§INSTANCE-webapollo-data
+      ports:
+        - "§§PORT:8080"
+
+    §§INSTANCE-webapollo-postgres:
+      image: postgres
+      container_name: §§INSTANCE-webapollo-postgres
+      environment:
+        - PGDATA=/data/postgresql
+      depends_on:
+        - §§INSTANCE-webapollo-data
+      volumes_from:
+        - §§INSTANCE-webapollo-data
+
+    §§INSTANCE-webapollo-data:
+      image: busybox
+      container_name: §§INSTANCE-webapollo-data
+      volumes:
+        - §§FOLDER/data:/data
