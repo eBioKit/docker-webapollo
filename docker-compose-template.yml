@@ -18,6 +18,7 @@ services:
       container_name: $${INSTANCE}-webapollo
       environment:
         - WEBAPOLLO_DB_HOST=postgres-machine
+        - CHADO_DB_HOST=postgres-machine
         - APOLLO_ADMIN_EMAIL=$${ADMIN_EMAIL}
         - APOLLO_ADMIN_PASSWORD=$${ADMIN_PASS}
       links:

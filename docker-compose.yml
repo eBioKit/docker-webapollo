@@ -6,6 +6,7 @@ services:
       container_name: instance1-webapollo
       environment:
         - WEBAPOLLO_DB_HOST=postgres-machine
+        - CHADO_DB_HOST=postgres-machine
         - APOLLO_ADMIN_EMAIL=ebiokit@gmail.com
         - APOLLO_ADMIN_PASSWORD=supersecret
       links:
