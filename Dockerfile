@@ -49,8 +49,9 @@ RUN /bin/bash /apollo/build.sh
 
 USER root
 RUN rm -rf ${CATALINA_HOME}/webapps/* && \
-	mv /apollo/target/apollo*.war ${CATALINA_HOME}/webapps/ROOT.war && \
-	rm -rf /apollo
+	mv /apollo/target/apollo*.war ${CATALINA_HOME}/webapps/ROOT.war
+	## && \
+	##rm -rf /apollo
 
 
 ##################### INSTALLATION END #####################
