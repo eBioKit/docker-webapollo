@@ -28,6 +28,13 @@ This procedure starts tomcat in a standard virtualised environment with a Postgr
 - `docker run -it -p 8888:8080 ebiokit/docker-webapollo`
 - Apollo will be available at [http://localhost:8888/](http://localhost:8888/)
 
+### Versions
+
+The following versions are available for WebApollo docker:
+- latest: the default branch for WebApollo docker. This version does not include the Apollo tools for preparing your data.
+- tools: this version includes the Apollo tools for preparing your data.
+
+
 ### Logging In
 
 The default credentials in this image are below. Credentials can be changed in the docker-compose file:
