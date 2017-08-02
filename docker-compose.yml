@@ -2,15 +2,30 @@ version: '2'
 services:
 
     instance1-webapollo:
-      image: ebiokit/docker-webapollo
+      image: fikipollo/webapollo:devel
       container_name: instance1-webapollo
       environment:
-        - WEBAPOLLO_DB_HOST=postgres-machine
-        - CHADO_DB_HOST=postgres-machine
-        - APOLLO_ADMIN_EMAIL=ebiokit@gmail.com
-        - APOLLO_ADMIN_PASSWORD=supersecret
+        - CONTEXT_PATH=ROOT
+        - WEBAPOLLO_DB_USERNAME=postgres
+        - WEBAPOLLO_DB_PASSWORD=mysecretpassword
+        - WEBAPOLLO_DB_DRIVER="org.postgresql.Driver"
+        - WEBAPOLLO_DB_DIALECT="org.hibernate.dialect.PostgresPlusDialect"
+        - WEBAPOLLO_DB_URI="jdbc:postgresql://db/postgres"
+        - WEBAPOLLO_CHADO_DB_USERNAME=postgres
+        - WEBAPOLLO_CHADO_DB_PASSWORD=mysecretpassword
+        - WEBAPOLLO_CHADO_DB_DRIVER="org.postgresql.Driver"
+        - WEBAPOLLO_CHADO_DB_DIALECT="org.hibernate.dialect.PostgresPlusDialect"
+        - WEBAPOLLO_CHADO_DB_URI="jdbc:postgresql://chado/postgres"
+        # Optional, allow image to 'wait'
+        - WEBAPOLLO_DB_HOST=db
+        - WEBAPOLLO_DB_PORT=5432
+        - WEBAPOLLO_DB_NAME=postgres
+        - WEBAPOLLO_CHADO_DB_HOST=chado
+        - WEBAPOLLO_CHADO_DB_PORT=5432
+        - WEBAPOLLO_CHADO_DB_NAME=postgres
       links:
-        - instance1-webapollo-postgres:postgres-machine
+        - instance1-webapollo-postgres:db
+        - instance1-webapollo-chado:chado
       depends_on:
         - instance1-webapollo-data
       volumes_from:
@@ -22,7 +37,19 @@ services:
       image: postgres
       container_name: instance1-webapollo-postgres
       environment:
+        - POSTGRES_PASSWORD=mysecretpassword
         - PGDATA=/data/postgresql
+      depends_on:
+        - instance1-webapollo-data
+      volumes_from:
+        - instance1-webapollo-data
+
+    instance1-webapollo-chado:
+      image: postgres
+      container_name: instance1-webapollo-chado
+      environment:
+        - POSTGRES_PASSWORD=mysecretpassword
+        - PGDATA=/data/chado
       depends_on:
         - instance1-webapollo-data
       volumes_from:
