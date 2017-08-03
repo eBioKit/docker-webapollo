@@ -13,7 +13,7 @@ MAINTAINER Rafael Hernandez <ebiokit@gmail.com>
 ################## BEGIN INSTALLATION ######################
 
 #ADD FILES AND SET PERMISSIONS
-ENV WEBAPOLLO_VERSION=7b304aac81f7dab77165f37bf210a6b3cb1b8080
+ENV WEBAPOLLO_VERSION=7b304aac81f7dab77165f37bf210a6b3cb1b8080 PERL5LIB=$PERL5LIB:/extlib/lib/perl5/
 COPY config/build.sh /bin/
 
 #INSTALL THE DEPENDENCIES
@@ -33,9 +33,12 @@ RUN adduser -s /bin/bash -D -h /apollo apollo && \
 
 ADD config/apollo-config.groovy /apollo/apollo-config.groovy
 
+RUN apk add perl perl-dev db db-dev wget
+
 RUN chown -R apollo:apollo /apollo && \
 	chmod +x /bin/build.sh && \
-	sudo -u apollo /bin/build.sh
+	sudo -u apollo /bin/build.sh && \
+	ln -s /usr/local/tomcat/webapps/ROOT/jbrowse /jbrowse
 
 RUN curl -L -o /chado.sql.gz https://github.com/erasche/chado-schema-builder/releases/download/1.31-jenkins97/chado-1.31.sql.gz
 
