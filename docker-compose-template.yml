@@ -4,6 +4,8 @@
 #   - $${INSTANCE}, name for the instance
 #   - $${ADMIN_EMAIL}, email for admin user
 #   - $${ADMIN_PASS}, email for admin user
+#   - $${ADMIN_FIRST_NAME}, name for admin user
+#   - $${ADMIN_LAST_NAME}, last name for admin user
 #   - $${APP_1_PORT_1}, port number for Webapollo instance
 #   - $${DATA_LOCATION}, location for the application data
 # TODO:
@@ -14,15 +16,27 @@ version: '2'
 services:
 
     $${INSTANCE}-webapollo:
-      image: ebiokit/docker-webapollo
+      image: ebiokit/docker-webapollo:devel
       container_name: $${INSTANCE}-webapollo
       environment:
-        - WEBAPOLLO_DB_HOST=postgres-machine
-        - CHADO_DB_HOST=postgres-machine
         - APOLLO_ADMIN_EMAIL=$${ADMIN_EMAIL}
         - APOLLO_ADMIN_PASSWORD=$${ADMIN_PASS}
+        - APOLLO_ADMIN_FIRST_NAME=$${ADMIN_FIRST_NAME}
+        - APOLLO_ADMIN_LAST_NAME=$${ADMIN_LAST_NAME}
+        # Optional, do not change
+        - WEBAPOLLO_DB_HOST=webapollo-db
+        - WEBAPOLLO_DB_PORT=5432
+        - WEBAPOLLO_DB_NAME=postgres
+        - WEBAPOLLO_DB_USERNAME=postgres
+        - WEBAPOLLO_DB_PASSWORD=mysecretpassword
+        - WEBAPOLLO_CHADO_DB_HOST=webapollo-chado
+        - WEBAPOLLO_CHADO_DB_PORT=5432
+        - WEBAPOLLO_CHADO_DB_NAME=postgres
+        - WEBAPOLLO_CHADO_DB_USERNAME=postgres
+        - WEBAPOLLO_CHADO_DB_PASSWORD=mysecretpassword
       links:
-        - $${INSTANCE}-webapollo-postgres:postgres-machine
+        - $${INSTANCE}-webapollo-postgres:webapollo-db
+        - $${INSTANCE}-webapollo-chado:webapollo-chado
       depends_on:
         - $${INSTANCE}-webapollo-data
       volumes_from:
@@ -34,7 +48,19 @@ services:
       image: postgres
       container_name: $${INSTANCE}-webapollo-postgres
       environment:
+        - POSTGRES_PASSWORD=mysecretpassword
         - PGDATA=/data/postgresql
+      depends_on:
+        - $${INSTANCE}-webapollo-data
+      volumes_from:
+        - $${INSTANCE}-webapollo-data
+
+    $${INSTANCE}-webapollo-chado:
+      image: postgres
+      container_name: $${INSTANCE}-webapollo-chado
+      environment:
+        - POSTGRES_PASSWORD=mysecretpassword
+        - PGDATA=/data/chado
       depends_on:
         - $${INSTANCE}-webapollo-data
       volumes_from:

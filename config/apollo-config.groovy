@@ -6,12 +6,12 @@ environments {
     production {
         dataSource {
             dbCreate = "update"
-            username = System.getenv("WEBAPOLLO_DB_USERNAME") ?: "apollo"
-            password = System.getenv("WEBAPOLLO_DB_PASSWORD") ?: "apollo"
+            username = System.getenv("WEBAPOLLO_DB_USERNAME")
+            password = System.getenv("WEBAPOLLO_DB_PASSWORD")
 
             driverClassName = "org.postgresql.Driver"
             dialect = "org.hibernate.dialect.PostgresPlusDialect"
-            url = "jdbc:postgresql://" + (System.getenv("WEBAPOLLO_DB_HOST") ?: "127.0.0.1").replaceAll(~/\\/$/, "") + "/apollo"
+						url = "jdbc:postgresql://" + (System.getenv("WEBAPOLLO_DB_HOST") ?: "127.0.0.1").replaceAll(~/\\/$/, "") + "/" + System.getenv("WEBAPOLLO_DB_NAME")
 
             properties {
                 // See http://grails.org/doc/latest/guide/conf.html#dataSource for documentation
@@ -36,12 +36,12 @@ environments {
         }
         dataSource_chado {
             dbCreate = "update"
-            username = "apollo"
-            password = "apollo"
+            username = System.getenv("WEBAPOLLO_CHADO_DB_USERNAME")
+            password = System.getenv("WEBAPOLLO_CHADO_DB_PASSWORD")
 
             driverClassName = "org.postgresql.Driver"
             dialect = "org.hibernate.dialect.PostgresPlusDialect"
-            url = "jdbc:postgresql://" + (System.getenv("WEBAPOLLO_DB_HOST") ?: "127.0.0.1").replaceAll(~/\\/$/, "") + "/chado"
+						url = "jdbc:postgresql://" + (System.getenv("WEBAPOLLO_CHADO_DB_HOST") ?: "127.0.0.1").replaceAll(~/\\/$/, "") + "/" + System.getenv("WEBAPOLLO_CHADO_DB_NAME")
 
             properties {
                 // See http://grails.org/doc/latest/guide/conf.html#dataSource for documentation
@@ -71,13 +71,13 @@ apollo {
     default_minimum_intron_size = System.getenv("WEBAPOLLO_MINIMUM_INTRON_SIZE") ? System.getenv("WEBAPOLLO_MINIMUM_INTRON_SIZE").toInteger() : 1
     history_size = System.getenv("WEBAPOLLO_HISTORY_SIZE") ? System.getenv("WEBAPOLLO_HISTORY_SIZE").toInteger() : 0
     overlapper_class = System.getenv("WEBAPOLLO_OVERLAPPER_CLASS") ?: "org.bbop.apollo.sequence.OrfOverlapper"
-    use_cds_for_new_transcripts = System.getenv("WEBAPOLLO_CDS_FOR_NEW_TRANSCRIPTS") // will default to false
-    feature_has_dbxrefs = System.getenv("WEBAPOLLO_FEATURE_HAS_DBXREFS") ?: true
-    feature_has_attributes = System.getenv("WEBAPOLLO_FEATURE_HAS_ATTRS") ?: true
-    feature_has_pubmed_ids = System.getenv("WEBAPOLLO_FEATURE_HAS_PUBMED") ?: true
-    feature_has_go_ids = System.getenv("WEBAPOLLO_FEATURE_HAS_GO") ?: true
-    feature_has_comments = System.getenv("WEBAPOLLO_FEATURE_HAS_COMMENTS") ?: true
-    feature_has_status = System.getenv("WEBAPOLLO_FEATURE_HAS_STATUS") ?: true
+    use_cds_for_new_transcripts = System.getenv("WEBAPOLLO_CDS_FOR_NEW_TRANSCRIPTS").equals("true")
+    feature_has_dbxrefs = System.getenv("WEBAPOLLO_FEATURE_HAS_DBXREFS").equals("true")
+    feature_has_attributes = System.getenv("WEBAPOLLO_FEATURE_HAS_ATTRS").equals("true")
+    feature_has_pubmed_ids = System.getenv("WEBAPOLLO_FEATURE_HAS_PUBMED").equals("true")
+    feature_has_go_ids = System.getenv("WEBAPOLLO_FEATURE_HAS_GO").equals("true")
+    feature_has_comments = System.getenv("WEBAPOLLO_FEATURE_HAS_COMMENTS").equals("true")
+    feature_has_status = System.getenv("WEBAPOLLO_FEATURE_HAS_STATUS").equals("true")
     translation_table = "/config/translation_tables/ncbi_" + (System.getenv("WEBAPOLLO_TRANSLATION_TABLE") ?: "1") + "_translation_table.txt"
     get_translation_code = System.getenv("WEBAPOLLO_TRANSLATION_TABLE") ? System.getenv("WEBAPOLLO_TRANSLATION_TABLE").toInteger() : 1
 
@@ -86,29 +86,25 @@ apollo {
     splice_acceptor_sites = System.getenv("WEBAPOLLO_SPLICE_ACCEPTOR_SITES") ? System.getenv("WEBAPOLLO_SPLICE_ACCEPTOR_SITES").split(",") : ["AG"]
     gff3.source = System.getenv("WEBAPOLLO_GFF3_SOURCE") ?: "."
 
-    google_analytics = System.getenv("WEBAPOLLO_GOOGLE_ANALYTICS_ID") ?: ["UA-62921593-1"]
+    google_analytics = System.getenv("WEBAPOLLO_GOOGLE_ANALYTICS_ID")
 
     admin{
         username = System.getenv("APOLLO_ADMIN_EMAIL") ?: "admin@local.host"
         password = System.getenv("APOLLO_ADMIN_PASSWORD") ?: "password"
-        firstName = System.getenv("APOLLO_ADMIN_FIRST_NAME") ?: "Admin"
-        lastName = System.getenv("APOLLO_ADMIN_LAST_NAME") ?: "Admin"
+        firstName = System.getenv("APOLLO_ADMIN_FIRST_NAME") ?: "Ad"
+        lastName = System.getenv("APOLLO_ADMIN_LAST_NAME") ?: "min"
     }
 }
 
 jbrowse {
     git {
         url = "https://github.com/GMOD/jbrowse"
-        tag = "1.12.3-release"
+        tag = "1.12.2-apollo"
+        alwaysPull = true
+        alwaysRecheck = true
     }
     plugins {
         WebApollo{
-            included = true
-        }
-        NeatHTMLFeatures{
-            included = true
-        }
-        NeatCanvasFeatures{
             included = true
         }
         RegexSequenceSearch{
@@ -117,9 +113,8 @@ jbrowse {
         HideTrackLabels{
             included = true
         }
-        // TODO
-        GCContent{
-            git = 'https://github.com/cmdcolin/GCContent'
+        GCContent {
+            git = 'https://github.com/elsiklab/gccontent'
             branch = 'master'
             alwaysRecheck = "true"
             alwaysPull = "true"
