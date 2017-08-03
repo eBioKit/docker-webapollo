@@ -34,6 +34,7 @@ RUN adduser -s /bin/bash -D -h /apollo apollo && \
 ADD config/apollo-config.groovy /apollo/apollo-config.groovy
 
 RUN chown -R apollo:apollo /apollo && \
+	chmod +x /bin/build.sh && \
 	sudo -u apollo /bin/build.sh
 
 RUN curl -L -o /chado.sql.gz https://github.com/erasche/chado-schema-builder/releases/download/1.31-jenkins97/chado-1.31.sql.gz
