@@ -16,7 +16,7 @@ version: '2'
 services:
 
     $${INSTANCE}-webapollo:
-      image: ebiokit/docker-webapollo:devel
+      image: ebiokit/docker-webapollo
       container_name: $${INSTANCE}-webapollo
       environment:
         - APOLLO_ADMIN_EMAIL=$${ADMIN_EMAIL}

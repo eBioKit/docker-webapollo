@@ -2,7 +2,7 @@ version: '2'
 services:
 
     instance1-webapollo:
-      image: ebiokit/docker-webapollo:devel
+      image: ebiokit/docker-webapollo
       container_name: instance1-webapollo
       environment:
         - APOLLO_ADMIN_EMAIL=admin@local.host
