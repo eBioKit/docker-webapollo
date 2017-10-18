@@ -1,5 +1,9 @@
 #!/bin/sh
 # https://tomcat.apache.org/tomcat-8.0-doc/config/context.html#Naming
+<<<<<<< HEAD
+=======
+CONTEXT_PATH="${CONTEXT_PATH:-ROOT}"
+>>>>>>> aed1801f0b28b22d621d62975c22144d255ebe19
 FIXED_CTX=$(echo "${CONTEXT_PATH}" | sed 's|/|#|g')
 WAR_FILE=${CATALINA_HOME}/webapps/${FIXED_CTX}.war
 rm -rf ${CATALINA_HOME}/webapps/*
@@ -30,6 +34,7 @@ else
 fi
 
 echo "Waiting for WebApollo DB"
+<<<<<<< HEAD
 until pg_isready -h $WEBAPOLLO_DB_HOST -p $WEBAPOLLO_DB_PORT -U $WEBAPOLLO_DB_USERNAME -d $WEBAPOLLO_DB_NAME; do
 	echo -n "."
 	sleep 5;
@@ -37,18 +42,32 @@ done;
 
 echo "Waiting for Chado DB"
 until pg_isready -h $WEBAPOLLO_CHADO_DB_HOST -p $WEBAPOLLO_CHADO_DB_PORT -U $WEBAPOLLO_CHADO_DB_USERNAME -d $WEBAPOLLO_CHADO_DB_NAME; do
+=======
+WEBAPOLLO_DB_CONNECTION_FLAG="-h $WEBAPOLLO_DB_HOST -p $WEBAPOLLO_DB_PORT -U $WEBAPOLLO_DB_USERNAME"
+until pg_isready ${WEBAPOLLO_DB_CONNECTION_FLAG} -d $WEBAPOLLO_DB_NAME; do
+>>>>>>> aed1801f0b28b22d621d62975c22144d255ebe19
 	echo -n "."
 	sleep 5;
 done;
 
-su postgres -c "psql ${WEBAPOLLO_HOST_FLAG} -lqt | cut -d \| -f 1 | grep -qw ${WEBAPOLLO_DB_NAME}"
+echo "Waiting for Chado DB"
+WEBAPOLLO_CHADO_DB_CONNECTION_FLAG="-h $WEBAPOLLO_CHADO_DB_HOST -p $WEBAPOLLO_CHADO_DB_PORT -U $WEBAPOLLO_CHADO_DB_USERNAME"
+until pg_isready ${WEBAPOLLO_CHADO_DB_CONNECTION_FLAG} -d $WEBAPOLLO_CHADO_DB_NAME; do
+	echo -n "."
+	sleep 5;
+done;
+
+su postgres -c "export PGPASSWORD='${WEBAPOLLO_DB_PASSWORD}'; psql ${WEBAPOLLO_DB_CONNECTION_FLAG}  -lqt | cut -d \| -f 1 | grep -qw ${WEBAPOLLO_DB_NAME}"
 if [[ "$?" == "1" ]]; then
 	echo "Apollo database not found, creating..."
-	su postgres -c "createdb ${WEBAPOLLO_HOST_FLAG} ${WEBAPOLLO_DB_NAME}"
-	su postgres -c "psql ${WEBAPOLLO_HOST_FLAG} -c \"CREATE USER ${WEBAPOLLO_DB_USERNAME} WITH PASSWORD '${WEBAPOLLO_DB_PASSWORD}';\""
-	su postgres -c "psql ${WEBAPOLLO_HOST_FLAG} -c 'GRANT ALL PRIVILEGES ON DATABASE \"${WEBAPOLLO_DB_NAME}\" to ${WEBAPOLLO_DB_USERNAME};'"
+	su postgres -c "export PGPASSWORD='${WEBAPOLLO_DB_PASSWORD}'; createdb ${WEBAPOLLO_DB_CONNECTION_FLAG} ${WEBAPOLLO_DB_NAME}"
+	su postgres -c "export PGPASSWORD='${WEBAPOLLO_DB_PASSWORD}'; psql ${WEBAPOLLO_DB_CONNECTION_FLAG} -c 'GRANT ALL PRIVILEGES ON DATABASE \"${WEBAPOLLO_DB_NAME}\" to ${WEBAPOLLO_DB_USERNAME};'"
+	su postgres -c "export PGPASSWORD='${WEBAPOLLO_DB_PASSWORD}'; psql ${WEBAPOLLO_DB_CONNECTION_FLAG} -c \"CREATE USER ${WEBAPOLLO_DB_USERNAME} WITH PASSWORD '${WEBAPOLLO_DB_PASSWORD}';\""
+else
+	echo "Apollo database already exists."
 fi
 
+<<<<<<< HEAD
 su postgres -c "psql ${WEBAPOLLO_CHADO_HOST_FLAG} -lqt | cut -d \| -f 1 | grep -qw ${WEBAPOLLO_CHADO_DB_NAME}"
 if [[ "$?" == "1" ]]; then
 	echo "Chado database not found, creating..."
@@ -57,6 +76,26 @@ if [[ "$?" == "1" ]]; then
 	su postgres -c "psql ${WEBAPOLLO_CHADO_HOST_FLAG} -c 'GRANT ALL PRIVILEGES ON DATABASE \"${WEBAPOLLO_CHADO_DB_NAME}\" to ${WEBAPOLLO_CHADO_DB_USERNAME};'"
 	echo "Loading Chado data"
 	su postgres -c "PGPASSWORD=${WEBAPOLLO_CHADO_DB_PASSWORD} psql -U ${WEBAPOLLO_CHADO_DB_USERNAME} -h ${WEBAPOLLO_DB_HOST} ${WEBAPOLLO_CHADO_DB_NAME} -f /chado.sql"
+=======
+su postgres -c "export PGPASSWORD='${WEBAPOLLO_CHADO_DB_PASSWORD}'; psql ${WEBAPOLLO_CHADO_DB_CONNECTION_FLAG} -lqt | cut -d \| -f 1 | grep -qw ${WEBAPOLLO_CHADO_DB_NAME}"
+if [[ "$?" == "1" ]]; then
+	echo "Chado database not found, creating..."
+	su postgres -c "export PGPASSWORD='${WEBAPOLLO_DB_PASSWORD}'; createdb ${WEBAPOLLO_CHADO_DB_CONNECTION_FLAG} ${WEBAPOLLO_CHADO_DB_NAME}"
+	su postgres -c "export PGPASSWORD='${WEBAPOLLO_DB_PASSWORD}'; psql ${WEBAPOLLO_CHADO_DB_CONNECTION_FLAG} -c \"CREATE USER ${WEBAPOLLO_CHADO_DB_USERNAME} WITH PASSWORD '${WEBAPOLLO_CHADO_DB_PASSWORD}';\""
+	su postgres -c "export PGPASSWORD='${WEBAPOLLO_DB_PASSWORD}'; psql ${WEBAPOLLO_CHADO_DB_CONNECTION_FLAG} -c 'GRANT ALL PRIVILEGES ON DATABASE \"${WEBAPOLLO_CHADO_DB_NAME}\" to ${WEBAPOLLO_CHADO_DB_USERNAME};'"
+else
+	echo "Chado database already exists."
+fi
+
+su postgres -c "export PGPASSWORD=${WEBAPOLLO_CHADO_DB_PASSWORD}; psql ${WEBAPOLLO_CHADO_DB_CONNECTION_FLAG} ${WEBAPOLLO_CHADO_DB_NAME} -c'\dt' | grep -c table"
+if [[ "$?" != "0" ]]; then
+	echo "Loading Chado data"
+	gunzip -c /chado.sql.gz > /tmp/chado.sql
+	su postgres -c "export PGPASSWORD=${WEBAPOLLO_CHADO_DB_PASSWORD}; psql ${WEBAPOLLO_CHADO_DB_CONNECTION_FLAG} ${WEBAPOLLO_CHADO_DB_NAME} -f /tmp/chado.sql"
+	rm /tmp/chado.sql
+else
+	echo "Chado database is already populated."
+>>>>>>> aed1801f0b28b22d621d62975c22144d255ebe19
 fi
 
 

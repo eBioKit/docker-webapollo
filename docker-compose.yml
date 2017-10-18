@@ -5,6 +5,7 @@ services:
       image: fikipollo/webapollo:devel
       container_name: instance1-webapollo
       environment:
+<<<<<<< HEAD
         - CONTEXT_PATH=ROOT
         - WEBAPOLLO_DB_USERNAME=postgres
         - WEBAPOLLO_DB_PASSWORD=mysecretpassword
@@ -26,6 +27,26 @@ services:
       links:
         - instance1-webapollo-postgres:db
         - instance1-webapollo-chado:chado
+=======
+        - APOLLO_ADMIN_EMAIL=admin@local.host
+        - APOLLO_ADMIN_PASSWORD=password
+        - APOLLO_ADMIN_FIRST_NAME=Ad
+        - APOLLO_ADMIN_LAST_NAME=min
+        # Optional, do not change
+        - WEBAPOLLO_DB_HOST=webapollo-db
+        - WEBAPOLLO_DB_PORT=5432
+        - WEBAPOLLO_DB_NAME=postgres
+        - WEBAPOLLO_DB_USERNAME=postgres
+        - WEBAPOLLO_DB_PASSWORD=mysecretpassword
+        - WEBAPOLLO_CHADO_DB_HOST=webapollo-chado
+        - WEBAPOLLO_CHADO_DB_PORT=5432
+        - WEBAPOLLO_CHADO_DB_NAME=postgres
+        - WEBAPOLLO_CHADO_DB_USERNAME=postgres
+        - WEBAPOLLO_CHADO_DB_PASSWORD=mysecretpassword
+      links:
+        - instance1-webapollo-postgres:webapollo-db
+        - instance1-webapollo-chado:webapollo-chado
+>>>>>>> aed1801f0b28b22d621d62975c22144d255ebe19
       depends_on:
         - instance1-webapollo-data
       volumes_from:
